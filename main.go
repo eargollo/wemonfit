@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/eargollo/fitbit-weight/cmd"
+import "github.com/eargollo/wemonfit/cmd"
 
 func main() {
 	cmd.Execute()
