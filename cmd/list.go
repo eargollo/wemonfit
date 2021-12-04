@@ -36,11 +36,25 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("list called")
 
-		_, err := fitbit.New(secret)
+		cli, err := fitbit.New(secret)
 
 		if err != nil {
 			log.Fatalf("Could not initialize Fitbit client. Error: %v", err)
 		}
+
+		ws, err := cli.AllWeights()
+		if err != nil {
+			log.Fatalf("Error getting all weights. Error: %v", err)
+		}
+
+		if len(ws) == 0 {
+			fmt.Println("There are no entries for weight on FitBit!")
+		}
+
+		for i, entry := range ws {
+			fmt.Printf("%d, %s, %s, %f, %f\n", i, entry.Date, entry.Time, entry.Bmi, entry.Weight)
+		}
+
 	},
 }
 
