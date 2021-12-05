@@ -26,13 +26,9 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "List all Fitbit weight entries as CSV",
+	Long: `List all Fitbit weight entries as CSV. Format:
+ID, date, time, weight, bmi, fat%`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("list called")
 
@@ -51,8 +47,24 @@ to quickly create a Cobra application.`,
 			fmt.Println("There are no entries for weight on FitBit!")
 		}
 
-		for i, entry := range ws {
-			fmt.Printf("%d, %s, %s, %f, %f\n", i, entry.Date, entry.Time, entry.Bmi, entry.Weight)
+		// Print CSV header
+		fmt.Printf("%s, %s, %s, %s, %s, %s\n",
+			"Logid",
+			"Date",
+			"Time",
+			"Weight",
+			"BMI",
+			"Fat%",
+		)
+		for _, entry := range ws {
+			fmt.Printf("%d, %s, %s, %f, %f, %f\n",
+				entry.Logid,
+				entry.Date,
+				entry.Time,
+				entry.Weight,
+				entry.Bmi,
+				entry.Fat,
+			)
 		}
 
 	},

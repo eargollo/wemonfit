@@ -19,7 +19,9 @@ type TimeSeries struct {
 type Weight struct {
 	Bmi    float64 `json:"bmi"`
 	Date   string  `json:"date"`
+	Fat    float64 `json:"fat"`
 	Logid  uint    `json:"logid"`
+	Source string  `json:"source"`
 	Time   string  `json:"time"`
 	Weight float64 `json:"weight"`
 }
