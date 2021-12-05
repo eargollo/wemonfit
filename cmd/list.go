@@ -18,6 +18,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/eargollo/wemonfit/pkg/fitbit"
 	"github.com/spf13/cobra"
@@ -30,15 +31,27 @@ var listCmd = &cobra.Command{
 	Long: `List all Fitbit weight entries as CSV. Format:
 ID, date, time, weight, bmi, fat%`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
-
 		cli, err := fitbit.New(secret)
-
 		if err != nil {
 			log.Fatalf("Could not initialize Fitbit client. Error: %v", err)
 		}
 
-		ws, err := cli.AllWeights()
+		var ws []fitbit.Weight
+
+		from, _ := cmd.Flags().GetString("from")
+		if from == "" {
+			// All weights
+			ws, err = cli.AllWeights()
+		} else {
+			// Get initial date
+			initialDate, err := time.Parse("2006/01/02", from)
+			if err != nil {
+				log.Fatalf("Could not parse from argument '%s' as a date. Make sure you format it as YYYY/MM/DD.", from)
+			}
+			log.Printf("List weights from %s", initialDate)
+			ws, err = cli.Weights(initialDate)
+		}
+
 		if err != nil {
 			log.Fatalf("Error getting all weights. Error: %v", err)
 		}
@@ -73,11 +86,7 @@ ID, date, time, weight, bmi, fat%`,
 func init() {
 	rootCmd.AddCommand(listCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
+	listCmd.PersistentFlags().String("from", "", "Initial date in format YYYY/MM/DD from which to list Fitbit weights")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

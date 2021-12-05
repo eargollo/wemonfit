@@ -31,7 +31,6 @@ type Weights struct {
 }
 
 func (cli *Client) AllWeights() (weights []Weight, err error) {
-	var we Weights
 	// First get the time series that has an entry for each day of the month
 	// and averages the measurements.
 	// The first entry in time series has the date for the first measurement.
@@ -51,6 +50,12 @@ func (cli *Client) AllWeights() (weights []Weight, err error) {
 
 	// Subtract 24 hours to make sure that no value is missed.
 	initialDate = initialDate.Add(-24 * time.Hour)
+
+	return cli.Weights(initialDate)
+}
+
+func (cli *Client) Weights(initialDate time.Time) (weights []Weight, err error) {
+	var we Weights
 
 	for initialDate.Before(time.Now()) {
 		initialDate = initialDate.Add(30 * 24 * time.Hour)
